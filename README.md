@@ -1,32 +1,198 @@
-#  Autonomous Driving
+SelfDrivingCNN 🚗
+An end-to-end self-driving car project using the Udacity Self-Driving Car Simulator, TensorFlow/Keras, and the NVIDIA Behavioral Cloning Network.
 
-This repository contains an end-to-end deep learning pipeline for autonomous driving using behavioral cloning. The system maps raw RGB camera pixels directly to steering commands using a Convolutional Neural Network (CNN). 
+This project trains a Convolutional Neural Network (CNN) to predict the steering angle from center camera images collected while driving manually in the simulator. The trained model is then used to drive the vehicle autonomously.
 
-Data collection is performed via the Udacity Self-Driving Car Simulator, and the model architecture is based on the NVIDIA End-to-End Learning paper.
+Project Overview
+The project consists of only two Python files:
 
-## Architecture
+train.py – Trains the NVIDIA CNN and saves the model.
+drive.py – Loads the trained model and controls the vehicle inside the simulator.
+This simple structure makes the project easy to understand while demonstrating the complete behavioral cloning workflow.
 
-The model is a standard feed-forward CNN designed for low-latency inference. 
+Project Structure
+SelfDrivingCNN/
+│
+├── train.py
+├── drive.py
+├── requirements.txt
+├── README.md
+│
+├── dataset/
+│   ├── driving_log.csv
+│   └── IMG/
+│       ├── center_000001.jpg
+│       ├── center_000002.jpg
+│       └── ...
+│
+└── model.h5
+Requirements
+Python 3.10 or later
+TensorFlow
+NumPy
+Pandas
+OpenCV
+Pillow
+Flask
+Eventlet
+python-socketio
+scikit-learn
+Install all dependencies:
 
-- **Input:** 66x200x3 RGB images (cropped from the simulator's 160x320x3 output).
-- **Normalization:** Lambda layer scaling pixel values to [-1, 1].
-- **Convolutional Layers:** 5 layers (24, 36, 48, 64, 64 filters) with ELU activations and strided convolutions to reduce spatial dimensions.
-- **Fully Connected Layers:** 3 dense layers (100, 50, 10).
-- **Output:** Single continuous value representing the steering angle in radians.
-
-## Data Pipeline
-
-The simulator outputs a `driving_log.csv` alongside an `IMG/` directory. The training pipeline includes the following preprocessing steps:
-
-1. **Cropping:** The top 60 pixels (sky/trees) and bottom 25 pixels (car hood) are removed. These regions contain no relevant features for lane tracking and only add noise.
-2. **Resizing:** Images are resized to 200x66 to match the NVIDIA architecture constraints and reduce computational overhead.
-3. **Augmentation:** To prevent the model from biasing toward left or right turns (depending on the track layout), 50% of the training images are randomly flipped horizontally, and their steering angles are inverted.
-
-## Setup and Installation
-
-Requires Python 3.8+.
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+Dataset
+The dataset is generated using the Udacity Self-Driving Car Simulator.
+
+Only the center camera images are used for training.
+
+Expected directory structure:
+
+dataset/
+│
+├── driving_log.csv
+└── IMG/
+    ├── center_000001.jpg
+    ├── center_000002.jpg
+    └── ...
+The driving_log.csv file contains:
+
+center,left,right,steering,throttle,brake,speed
+Although the simulator records images from three cameras, this project only uses:
+
+Center camera image
+Steering angle
+Image Preprocessing
+Every image is preprocessed before being passed to the neural network.
+
+Processing steps:
+
+Crop the sky.
+Crop the car hood.
+Resize to 200 × 66 pixels.
+Normalize pixel values inside the model.
+The same preprocessing is used during both training and autonomous driving.
+
+Model Architecture
+This project uses the NVIDIA End-to-End Learning for Self-Driving Cars architecture.
+
+Network:
+
+Input (66 × 200 × 3)
+
+↓
+
+Normalization
+
+↓
+
+Conv 24
+
+↓
+
+Conv 36
+
+↓
+
+Conv 48
+
+↓
+
+Conv 64
+
+↓
+
+Conv 64
+
+↓
+
+Flatten
+
+↓
+
+Dense 100
+
+↓
+
+Dense 50
+
+↓
+
+Dense 10
+
+↓
+
+Output (Steering Angle)
+Training the Model
+Make sure your dataset is located inside the dataset/ folder.
+
+Run:
+
+python train.py
+The training script will:
+
+Load the dataset
+Read center camera images
+Preprocess images
+Split training and validation data
+Train the NVIDIA CNN
+Save the trained model
+Output:
+
+model.h5
+Running Autonomous Mode
+After training:
+
+Open the Udacity Self-Driving Car Simulator.
+Select your preferred track.
+Switch the simulator to Autonomous Mode.
+Run:
+python drive.py
+The script will:
+
+Load model.h5
+Receive camera frames from the simulator
+Preprocess each frame
+Predict the steering angle
+Send steering and throttle commands to the simulator
+The vehicle will begin driving automatically using the trained model.
+
+Complete Workflow
+Open Simulator
+        │
+        ▼
+Training Mode
+        │
+        ▼
+Collect Dataset
+        │
+        ▼
+dataset/
+        │
+        ▼
+python train.py
+        │
+        ▼
+model.h5
+        │
+        ▼
+Open Simulator
+        │
+        ▼
+Autonomous Mode
+        │
+        ▼
+python drive.py
+        │
+        ▼
+Self-Driving Car
+Notes
+This project uses only the center camera for simplicity.
+Image preprocessing during training and inference must be identical.
+Better driving performance generally requires a larger and more diverse dataset.
+Collect recovery driving data to improve the model's ability to return to the lane after drifting.
+References
+NVIDIA – End to End Learning for Self-Driving Cars
+Udacity – Self-Driving Car Simulator
+TensorFlow & Keras Documentation
+License
+This project is released for educational purposes. Feel free to use, modify, and improve it for learning and research.
