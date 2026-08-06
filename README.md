@@ -1,4 +1,4 @@
-# SelfDrivingCNN 🚗
+# Udacity Self Driving Car🚗
 
 An end-to-end self-driving car project using the **Udacity Self-Driving Car Simulator**, **TensorFlow/Keras**, and the **NVIDIA Behavioral Cloning Network**.
 
