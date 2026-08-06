@@ -1,4 +1,4 @@
-# Behavioral Cloning for Autonomous Driving
+#  Autonomous Driving
 
 This repository contains an end-to-end deep learning pipeline for autonomous driving using behavioral cloning. The system maps raw RGB camera pixels directly to steering commands using a Convolutional Neural Network (CNN). 
 
